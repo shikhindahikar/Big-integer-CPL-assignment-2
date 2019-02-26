@@ -1,36 +1,33 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-typedef struct node_type {
+typedef struct NodeType{
 	int data;
-	struct node_type * next;
-}node;
+	struct NodeType* next;
+    struct NodeType* tail;
+	struct NodeType* start;
+}node,BigInt;
 
-typedef struct bigInt_type {
-	node * tail;
-	node* start;
-}bigInt;
-
-void Init(bigInt * num){
+void Init(BigInt* num){
 	num->tail=num->start=NULL;//Initialize a null node num
 }
 
-node * makenode(node * num,int n){
+node * MakeNode(node * num,int n){
 	num=(node*)malloc(sizeof(node));//allocate node a memory block and insert a data
 	num->next=NULL;
 	num->data=n;
 	return num;
 }
-void createInt(bigInt * num1){
+void Create(BigInt* num1){
 	printf("please enter number\n");
-	int n,i=0;                          //creating a complete list using Init() and makenode functions
+	int n,i=0;                          //creating a complete list using Init() and MakeNode functions
 	char s[310];
 	node * num;
 	Init(num1);
 	scanf("%s",s);
 	while(s[i]!='\0'){
 		n=(int)s[i]-48;                 //first big number is taken as a string and then type casted into integers and inserted into a linked list
-		num=makenode(num,n);
+		num=MakeNode(num,n);
 		if(num1->start==NULL){
 			num1->start=num1->tail=num;
 		}
@@ -42,19 +39,19 @@ void createInt(bigInt * num1){
 	}
 
 }
-void printnode(node * num){
+void PrintNode(node * num){
 	node * temp= num;
-	if(temp!=NULL){
-		printnode(temp->next);
+	if(temp!=NULL){             //prints nodes data if it is not the end of the list
+		PrintNode(temp->next);
 		printf("%d",temp->data);
 	}
 }
-void print(bigInt * num1){
-	node*num=num1->start;
-	printnode(num);
+void print(BigInt * num1){
+	node* num=num1->start;
+	PrintNode(num);
 	printf("\n");
 }
-void add(bigInt *l1, bigInt *l2,bigInt *b)
+void add(BigInt *l1, BigInt *l2,BigInt *b)
 {
 	Init(b);
 	int sum,carry=0;
@@ -66,7 +63,7 @@ void add(bigInt *l1, bigInt *l2,bigInt *b)
 		sum=p1->data+p2->data+carry;
 		carry=sum/10;
 		sum=sum%10;
-		num=makenode(num,sum);
+		num=MakeNode(num,sum);
 		if(b->start==NULL){
 			b->start=b->tail=num;
 		}
@@ -84,7 +81,7 @@ void add(bigInt *l1, bigInt *l2,bigInt *b)
 			sum=p1->data+carry;
 			carry=sum/10;
 			sum=sum%10;
-			num=makenode(num,sum);
+			num=MakeNode(num,sum);
 			if(b->start==NULL){
 				b->start=b->tail=num;
 			}
@@ -102,7 +99,7 @@ void add(bigInt *l1, bigInt *l2,bigInt *b)
 			sum=p2->data+carry;
 			carry=sum/10;
 			sum=sum%10;
-			num=makenode(num,sum);
+			num=MakeNode(num,sum);
 			if(b->start==NULL){
 				b->start=b->tail=num;
 			}
@@ -116,7 +113,7 @@ void add(bigInt *l1, bigInt *l2,bigInt *b)
 	}
 	if(carry!=0)
 	{
-		num=makenode(num,sum);
+		num=MakeNode(num,sum);
 		(b->tail)->next=num;
 		b->tail=num;
 	}
@@ -124,10 +121,10 @@ void add(bigInt *l1, bigInt *l2,bigInt *b)
 
 
 }
-void subtract(bigInt *l1, bigInt *l2,bigInt *b)
+void subtract(BigInt *l1, BigInt *l2,BigInt *b)
 {
 	Init(b);
-	bigInt d;
+	BigInt d;
 	int sub,brw=0;
 	node *num,*p1,*p2;
 	p1=l1->start;
@@ -137,7 +134,7 @@ void subtract(bigInt *l1, bigInt *l2,bigInt *b)
 		sub=p1->data-p2->data-brw;
 		brw=(sub<0)?1:0;
 		sub=(brw==1)?(10+sub):sub;
-		num=makenode(num,sub);
+		num=MakeNode(num,sub);
         if(b->start==NULL){
             b->start=b->tail=num;
         }
@@ -155,7 +152,7 @@ void subtract(bigInt *l1, bigInt *l2,bigInt *b)
 			sub=p1->data-brw;
 			brw=(sub<0)?1:0;
 			sub=(brw==1)?(10+sub):sub;
-			num=makenode(num,sub);
+			num=MakeNode(num,sub);
 			if(b->start==NULL){
 				b->start=b->tail=num;
 			}
@@ -178,7 +175,7 @@ void subtract(bigInt *l1, bigInt *l2,bigInt *b)
 	}
 	printf("\n");
 }
-void multiplication(bigInt *l1, bigInt *l2,bigInt *b)
+void Mult(BigInt *l1, BigInt *l2,BigInt *b)
 {
 	Init(b);
 	int m,carry=0,d;
@@ -193,7 +190,7 @@ void multiplication(bigInt *l1, bigInt *l2,bigInt *b)
 		while(p2!=NULL)
 		{
 			if(p==NULL){
-				num=makenode(num,0);
+				num=MakeNode(num,0);
 				if(b->start==NULL){
 					t=p=b->start=b->tail=num;
 				}
@@ -215,7 +212,7 @@ void multiplication(bigInt *l1, bigInt *l2,bigInt *b)
 		}
 		if(carry!=0)
 		{
-				num=makenode(num,carry);
+				num=MakeNode(num,carry);
 				if(b->start==NULL){
 					p=b->start=b->tail=num;
 				}
@@ -238,33 +235,33 @@ int main()
 	while(e==1)
 	{
 		int a,b,c;
-		printf("Enter operation to perform-\n1.Addition\n2.Subtraction\n3.Multiplication\n");
+		printf("Enter operation to perform-\n1.Addition\n2.Subtraction\n3.Mult\n");
 		scanf("%d",&c);
 		switch(c)
 		{
 			case 1 :
 				{
-					bigInt a,b,c;
-					createInt(&a);
-					createInt(&b);
+					BigInt a,b,c;
+					Create(&a);
+					Create(&b);
 					printf("addition is:\n");
 					add(&a,&b,&c);
 				}	break;
 			case 2 :
 				{
-					bigInt a,b,c;
-					createInt(&a);
-					createInt(&b);
+					BigInt a,b,c;
+					Create(&a);
+					Create(&b);
 					printf("subtraction is:\n");
 					subtract(&a,&b,&c);
 				}	break;
 			case 3 :
 				{
-					bigInt a,b,c;
-					createInt(&a);
-					createInt(&b);
-					printf("multiplication  is:\n");
-					multiplication(&a,&b,&c);
+					BigInt a,b,c;
+					Create(&a);
+					Create(&b);
+					printf("Mult  is:\n");
+					Mult(&a,&b,&c);
 				}	break;
 			default  : 	printf("Enter correct option\n");
 					break;
